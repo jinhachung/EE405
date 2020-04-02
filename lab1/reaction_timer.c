@@ -26,13 +26,15 @@ char getche(void);
 int main(void)
 {
     // user-input character
-    char c; 
+    char c;
     // variables for computing elapsed time
     struct timeval start_tv, stop_tv;
     struct timezone tz;
     double reaction_time_in_ms;
+    // set seed for rand()
+    srand(time(NULL))
     // repeat 3 times
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; ++i) {
         // a: generate random time T and wait for time T+2
         double gen_time = ( (double)rand() / (double)RAND_MAX ) * 3;
         double wait_time = gen_time + 2;
