@@ -18,6 +18,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/time.h>
+#include <time.h>
 
 // inform compiler about arguments and return values: conform to actual function in getche.c
 char getch(void);
@@ -32,24 +33,23 @@ int main(void)
     struct timezone tz;
     double reaction_time_in_ms;
     // set seed for rand()
-    srand(time(NULL))
+    srand(time(NULL));
     // repeat 3 times
     for (int i = 0; i < 3; ++i) {
         // a: generate random time T and wait for time T+2
         double gen_time = ( (double)rand() / (double)RAND_MAX ) * 3;
         double wait_time = gen_time + 2;
-        //fprintf(stdout, "generated wait time: %f\n", wait_time);
         usleep(wait_time * 1e6);
         // b: generate random char x, either f or j
         char key = (rand() % 2 == 0) ? 'f' : 'j';
         // c: output string
-        fprintf(stdout, "Type the '%c' character: ", key);
+        fprintf(stdout, "Type the '%c' character:", key);
         fflush(NULL);
         // d: get start time
         gettimeofday(&start_tv, &tz);
         // e: wait until user hits a key, input in raw mode and reply
-        c = getche();
-        //fprintf(stdout, "Received input character: %c\n", c);
+        c = getch();
+        fprintf(stdout, " %c\n", c);
         // f: get stop time
         gettimeofday(&stop_tv, &tz);
         // g: compute response time
@@ -57,9 +57,9 @@ int main(void)
                              + (stop_tv.tv_usec - start_tv.tv_usec) * 1e-3;
         // h: print key correctness and response time
         if (key == c)
-            fprintf(stdout, "\n  Correct response %c in %g ms.\n", c, reaction_time_in_ms);
+            fprintf(stdout, "  Correct response %c in %g ms.\n", c, reaction_time_in_ms);
         else
-            fprintf(stdout, "\n  Incorrect response %c in %g ms.\n", c, reaction_time_in_ms);
+            fprintf(stdout, "  Incorrect response %c in %g ms.\n", c, reaction_time_in_ms);
     }
     return 0;
 }
