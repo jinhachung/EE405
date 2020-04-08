@@ -9,24 +9,30 @@ echo 31 > /sys/class/gpio/export # this should create directory /sys/class/gpio/
 echo out > /sys/class/gpio/gpio30/direction
 echo out > /sys/class/gpio/gpio31/direction
 # 3. get start time (ns) 
-start=$(date +%s.%N);
-# this is displayed in "seconds.nanoseconds" form, so we need to multiply by 10E9
-# to get time in nanoseconds
-start=$(($start * 10));
-# 5. finite loop many times
-
+start=$(date +%s%N)
+# 5. finite loop many times -> 100 times
+for i in {1..100}
+do
     # A. turn on light 1
-    
+    echo 1 > /sys/class/leds/beaglebone\:green\:usr1
     # B. turn on light 2
-    
+    echo 1 > /sys/class/leds/beaglebone\:green\:usr2 
     # C. turn off light 1
-    
+    echo 0 > /sys/class/leds/beaglebone\:green\:usr1
     # D. turn off light 2
-    
+    echo 0 > /sys/class/leds/beaglebone\:green\:usr2 
+done
 # 6. get end time (ns)
-end=""
+end=$(date +%s%N)
 # 7. echo end/start time
-echo "start time: $start"
+echo "======= looped 100 times to get ======="
+echo "start time: $start ns"
+echo "  end time: $end ns"
+time_taken=$(($end - $start))
+echo "time taken: $time_taken ns in 100 loops"
+avg_time=$(($time_taken/100))
+echo "average time: $avg_time ns per loop"
+echo "======================================="
 # 8. set direction as input
 echo in > /sys/class/gpio/gpio30/direction
 echo in > /sys/class/gpio/gpio31/direction
