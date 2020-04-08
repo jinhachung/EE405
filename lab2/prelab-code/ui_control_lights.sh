@@ -3,8 +3,8 @@
 # 0. print title
 echo "========== shell script for light control =========="
 # 1. export - get permission for GPIO 30 & GPIO 31
-echo 30 > /sys/class/gpio/export # this should create directory /sys/class/gpio/export/gpio30
-echo 31 > /sys/class/gpio/export # this should create directory /sys/class/gpio/export/gpio31
+echo 30 > /sys/class/gpio/export # this should create directory /sys/class/gpio/gpio30
+echo 31 > /sys/class/gpio/export # this should create directory /sys/class/gpio/gpio31
 # 2. set directions of GPIO 30 & GPIO 31 as output
 echo out > /sys/class/gpio/gpio30/direction
 echo out > /sys/class/gpio/gpio31/direction
@@ -31,5 +31,5 @@ done
 echo in > /sys/class/gpio/gpio30/direction
 echo in > /sys/class/gpio/gpio31/direction
 # 9. unexport - release access permission for GPIO 30 & 31
-echo 30 > /sys/class/gpio/unexport # this should remove directory /sys/class/gpio/export/gpio30
-echo 31 > /sys/class/gpio/unexport # this should remove directory /sys/class/gpio/export/gpio31
+echo 30 > /sys/class/gpio/unexport # this should remove directory /sys/class/gpio/gpio30
+echo 31 > /sys/class/gpio/unexport # this should remove directory /sys/class/gpio/gpio31
