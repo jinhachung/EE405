@@ -24,8 +24,10 @@ while true;
     fi
     # if program reaches here, light_id on_off_str are valid inputs
     # D. action for correct input
-    echo "light_id:$light_id and on_off_str:$on_off_str"
-    echo "WHAT EXACTLY IS THE ACTION FOR CORRECT INPUT?"
+    # set file depending on light_id
+    file_to_access="/sys/class/leds/beaglebone\:green\:usr$light_id"
+    # set on/off for the chosen file
+    echo $on_off_str > $file_to_access
 done
 # 8. set directions as input
 echo in > /sys/class/gpio/gpio30/direction
