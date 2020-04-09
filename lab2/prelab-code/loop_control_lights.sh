@@ -25,14 +25,14 @@ done
 # 6. get end time (ns)
 end=$(date +%s%N)
 # 7. echo end/start time
-echo "======= looped 100 times to get ======="
+echo "================= looped 100 times to get ================="
 echo "start time: $start ns"
 echo "  end time: $end ns"
 time_taken=$(($end - $start))
 echo "time taken: $time_taken ns in 100 loops"
 avg_time=$(($time_taken/100))
 echo "average time: $avg_time ns per loop"
-echo "======================================="
+echo "==========================================================="
 # 8. set direction as input
 echo in > /sys/class/gpio/gpio30/direction
 echo in > /sys/class/gpio/gpio31/direction
