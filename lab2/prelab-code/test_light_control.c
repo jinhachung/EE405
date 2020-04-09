@@ -39,10 +39,10 @@ int main(void) {
         else // break if on_off_str is not 'on' nor 'off'
             break;
         // D. control action
-        // TODO: IS THIS RIGHT?
-        if (light_id == 30)
+        // 1 is connected to GPIO 30, and 2 is connected to GPIO 31
+        if (light_id == 1)
             gpio_fd_set_value(fd30, (unsigned int)on_off_int);
-        else if (light_id == 31)
+        else if (light_id == 2)
             gpio_fd_set_value(fd31, (unsigned int)on_off_int);
         else
             break;
