@@ -14,13 +14,17 @@ start=$(date +%s%N)
 for i in {1..100}
 do
     # A. turn on light 1
-    echo 1 > /sys/class/leds/beaglebone\:green\:usr1
+    #echo 1 > /sys/class/leds/beaglebone\:green\:usr1
+    echo 1 > /sys/class/gpio/gpio30/value
     # B. turn on light 2
-    echo 1 > /sys/class/leds/beaglebone\:green\:usr2 
+    #echo 1 > /sys/class/leds/beaglebone\:green\:usr2
+    echo 1 > /sys/class/gpio/gpio31/value
     # C. turn off light 1
-    echo 0 > /sys/class/leds/beaglebone\:green\:usr1
+    #echo 0 > /sys/class/leds/beaglebone\:green\:usr1
+    echo 0 > /sys/class/gpio/gpio30/value
     # D. turn off light 2
-    echo 0 > /sys/class/leds/beaglebone\:green\:usr2 
+    #echo 0 > /sys/class/leds/beaglebone\:green\:usr2
+    echo 0 > /sys/class/gpio/gpio31/value
 done
 # 6. get end time (ns)
 end=$(date +%s%N)
