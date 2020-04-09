@@ -87,28 +87,97 @@ int gpio_set_dir(unsigned int gpio, unsigned int out) {
     // and +1 for null terminator to get len + 31 bytes of malloc()
     char *str = (char *)malloc(len + 31);
     snprintf(str, len + 31, "/sys/class/gpio/gpio%d/direction", gpio);
-    int fd = open();
+    // open file in write-only mode
+    int fd = open(str, O_WRONLY);
+    // write 'in' or 'out' depending on value of variable out
+    if (out == 0u) {
+        write(fd, "in", 2);
+    }
+    else if (out == 1u) {
+        write(fd, "out", 3);
+    }
+    else {
+        // reaching here means out != 0 && out != 1
+        fprintf(stderr, "gpio_set_dir(): invalid out number - out should be 0 or 1\n");
+        return -1;
+    }
+    // always close opened file when done
+    gpio_fd_close(fd);
+    // free unneeded pointer
+    free(str);
+    // return 1 for success
+    return 1;
 }
 
 // as far as I understand, this function should open the VALUE file for the given gpio(XX)
 // namely, /sys/class/gpio/gpioXX/value
 // and should be called for gpio_fd_set_value() and gpio_fd_get_value() 
-// it should return the file descriptor for the opened file
+// **** it is also checked in this function whether gpio value XX is in the correct range [0, 127] ****
+// -1 is returned (invalid value as a file descriptor) if the number is NOT in the right range
+// OTHERWISE, the file descriptor for the open file is returned
 int gpio_fd_open(unsigned int gpio) {
-    ;
-}
-
-int gpio_fd_set_value(int fd, unsigned int value) {
-    ;
-}
-
-int gpio_fd_get_value(int fd, unsigned int *value) {
-    ;
-}
-
-int gpio_fd_close(int fd) {
-    // close the given file descriptor file
-    close(fd);
-
+    size_t len = gpio_check_and_get_length(gpio);
+    if (len == (size_t)0) {
+        // len == 0 means it was not in the right range -> return -1
+        // TODO: should error be raised in the calling function?
+        fprintf(stderr, "gpio_fd_open(): invalid gpio number\n");
+        return -1;
+    }
+    // place the gpio number inside file name with snprintf()
+    // "/sys/class/gpio/gpioXX/value" is 26 characters (without XX)
+    // and +1 for null terminator to get len + 27 bytes of malloc()
+    char *str = (char *)malloc(len + 27);
+    snprintf(str, len + 27, "/sys/class/gpio/gpio%d/value", gpio);
+    // open file in reading & writing mode - we use both 'set' (writing) AND 'get' (reading)
+    int fd = open(str, O_RDWR);
     return fd;
+    //return open(str, O_RDWR;
+}
+
+// write 'value' to the file with file descriptor fd
+// if value is NOT 0 nor 1, return -1 witihout writing instead
+int gpio_fd_set_value(int fd, unsigned int value) {
+    // check if value is valid (0 or 1), and write if valid
+    if (value == 0u)
+        write(fd, "0", 1);
+    else if (value == 1u)
+        write(fd, "1", 1);
+    else {
+        // invalid value -> raise error and return -1
+        fprintf(stderr, "gpio_fd_set_value(): invalid value number - value should be 0 or 1'\n");
+        return -1;
+    }
+    // reaching here means successfully written
+    // TODO: should it return 1 for success or return the 'value' written?
+    return 1;
+    // return (int)value;
+}
+
+// read 'value' from the file with file descriptor fd
+int gpio_fd_get_value(int fd, unsigned int *value) {
+    char *buffer = (char *)calloc(10, sizeof(char)); // 10 bytes should be enough to store 1 byte
+    int numbytes = (int)read(fd, buffer, 5); // read 5 bytes
+    // numbytes should be 1, and the read data must be either 0 or 1
+    if (numbytes == 1) {
+        // value must be 0 or 1, otherwise file is corrupted
+        if (buffer[0] == '0') {
+            *value = 0u;
+            // return 1 for success
+            return 1;
+        }
+        else if (buffer[0] == '1') {
+            *value = 1u;
+            // return 1 for success
+            return 1;
+        }
+    }
+    // reaching here means the file has been corrupted - value stord is NOT 0 nor 1
+    fprintf(stderr, "gpio_fd_get_value(): file has been corrupted\n");
+    return -1;
+}
+
+// close the given file descriptor file
+int gpio_fd_close(int fd) {
+    // returns 0 on success and -1 on error
+    return close(fd);
 }
