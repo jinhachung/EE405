@@ -123,14 +123,8 @@ static ssize_t LightLEDs_write (struct file *filp, const char *wbuf, size_t wcou
 	// F. Read GPIO0, modify, and write bits 30 & 31 according to user_data
 	// Fill-in read, modify, and write OMAP4_GPIO_DATAOUT
 	/* MY CODE CHUNK STARTS HERE */
-	// read GPIO0
-	oe0 = ioread32(gpio0_vbase + OMAP4_GPIO_OE);
-	// oe0new: bits 30 & 31 are mdata (user_data)'s, rest are same as oe0's
-	// mdata & 0xc0000000	-> bits 30 & 31 are mdata's 30 & 31 bits, rest are 0s
-	// oe0 & 0x3fffffff		-> bits 30 & 31 are 0s, rest are oe0's 0 - 29 bits
-	oe0new = (mdata & 0xc0000000) | (oe0 & 0x3fffffff);
-	// write oe0new value to address "base + offset"
-	iowrite32(oe0new, gpio0_vbase + OMAP4_GPIO_OE);
+	// mdata is 0-3, push it by 30 bits
+	mdata = mdata << 30;	// one of: 0x00000000, 0x40000000, 0x80000000, 0xc0000000
 	// read data
 	dout0 = ioread32(gpio0_vbase + OMAP4_GPIO_DATAOUT);
 	// dout0new: bits 30 & 31 are mdata (user_data)'s, rest are same as dout0's
