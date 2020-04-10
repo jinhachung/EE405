@@ -96,10 +96,17 @@ static int LightLEDs_open(struct inode *inode, struct file *filp)
 // D. Set Directions of GPIO 30 & 31 to output
 	// First set GPIO0 30 - 31 direction to output ('0')
 	// Fill-in read, modify, and write OMAP4_GPIO_OE
-
+	/* MY CODE CHUNK STARTS HERE */
+	// read 32-bit data, OMAP4_GPIO_OE is offset
+	oe0 = ioread32(gpio0_vbase + OMAP4_GPIO_OE);
+	// set bits 30 & 31 to 0 (b & 0 == 0, b & 1 == b)
+	oe0new = oe0 & 0x3fffffff;
+	// write oe0new value to address "base + offset"
+	iowrite32(oe0new, gpio0_vbase + OMAP4_GPIO_OE);
+	/* MY CODE CHUNK ENDS HERE */
 	printk("  D. LightLEDs opened.\n");
 
-	return 0;           
+	return 0;
 }
 
 
@@ -115,7 +122,24 @@ static ssize_t LightLEDs_write (struct file *filp, const char *wbuf, size_t wcou
 
 	// F. Read GPIO0, modify, and write bits 30 & 31 according to user_data
 	// Fill-in read, modify, and write OMAP4_GPIO_DATAOUT
- 
+	/* MY CODE CHUNK STARTS HERE */
+	// read GPIO0
+	oe0 = ioread32(gpio0_vbase + OMAP4_GPIO_OE);
+	// oe0new: bits 30 & 31 are mdata (user_data)'s, rest are same as oe0's
+	// mdata & 0xc0000000	-> bits 30 & 31 are mdata's 30 & 31 bits, rest are 0s
+	// oe0 & 0x3fffffff		-> bits 30 & 31 are 0s, rest are oe0's 0 - 29 bits
+	oe0new = (mdata & 0xc0000000) | (oe0 & 0x3fffffff);
+	// write oe0new value to address "base + offset"
+	iowrite32(oe0new, gpio0_vbase + OMAP4_GPIO_OE);
+	// read data
+	dout0 = ioread32(gpio0_vbase + OMAP4_GPIO_DATAOUT);
+	// dout0new: bits 30 & 31 are mdata (user_data)'s, rest are same as dout0's
+	// mdata & 0xc0000000	-> bits 30 & 31 are mdata's 30 & 31 bits, rest are 0s
+	// dout0 & 0x3fffffff	-> bits 30 & 31 are 0s, rest are dout0's 0 - 29 bits
+	dout0new = (mdata & 0xc0000000) | (dout0 & 0x3fffffff);
+	// write dout0new value to address "base + offset"
+	iowrite32(dout0new, gpio0_vbase + OMAP4_GPIO_DATAOUT);
+	/* MY CODE CHUNK ENDS HERE */
 	// Can check printout via dmesg
 	printk("LightLEDs GPIO0_DOUT: %08x to %08x\n", dout0, dout0new);
 
@@ -132,7 +156,14 @@ static int LightLEDs_release(struct inode *inode, struct file *filp)
 // -D. Set Directions of GPIO 30 & 31 to input
 	// First set GPIO0 30 - 31 direction to input ('1')
 	// Fill-in read, modify, and write OMAP4_GPIO_OE
-
+	/* MY CODE CHUNK STARTS HERE */
+	// read 32-bit data, OMAP4_GPIO_OE is offset
+	oe0 = ioread32(gpio0_vbase + OMAP4_GPIO_OE);
+	// set bits 30 & 31 to 1
+	oe0new = oe0 | 0xc0000000;
+	// write oe0new value to address "base + offset"
+	iowrite32(oe0new, gpio0_vbase + OMAP4_GPIO_OE);
+	/* MY CODE CHUNK ENDS HERE */
 // -C. ReSet MUXes
 	// None since Mux are set by Kernel.
 
