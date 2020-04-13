@@ -48,7 +48,7 @@ do
         # if duty is negative, stop and exit
         then break
     fi
-    # assign duty value for PWM0A
+    # assign duty value for PWM1A
     # since period is staying the same, no need for disable-set period-enable
     echo $duty > "/sys/devices/ocp.3/$servo1/duty"
 
