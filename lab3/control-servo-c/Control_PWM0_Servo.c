@@ -159,7 +159,7 @@ int main(int argc, char *argv[]) {
         fprintf(stdout, "Enter duty (in us, from 1000 to 2000): ");
         fflush(stdout);
         fscanf(stdin, "%d", &duty_us);
-        // B. break if duty_ms < 0
+        // B. break if duty_us < 0
         if ((duty_us < 1000) || (duty_us > 2000)) 
             break;
         // open duty file because now, we will DEFINITELY write to this file
