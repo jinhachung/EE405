@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
     // PWM0
     char *pwm0_dir_name = calloc(18, sizeof(char)); // "pwm_test_p9_31.xx" is 18 letters including null-terminator
     char *abs_pwm0_dir_name = calloc(38, sizeof(char)); // absolute path to pwm_test_p9_31.xx, "/sys/devices/ocp.3/pwm_test_p9_31.xx/"
-    // afp (absolute file path) to differerent files for PWM0 directory
+    // afp (absolute file path) to different files for PWM0 directory
     char *afp_pwm0_run = calloc(41, sizeof(char));
     char *afp_pwm0_period = calloc(44, sizeof(char));
     char *afp_pwm0_duty = calloc(42, sizeof(char));
