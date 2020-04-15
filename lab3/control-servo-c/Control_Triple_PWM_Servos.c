@@ -23,6 +23,7 @@ int main(int argc, char *argv[]) {
     char *bone_capemgr = calloc(15, sizeof(char)); // bone_capemgr.N is 15 letters including null-terminator
     char *abs_bone_capemgr = calloc(28, sizeof(char)); // absolute path to bone_capemgr.N, "/sys/devices/bone_capemgr.N"
     int found_bone_capemgr = 0;
+    int found_ocp = 0;
     int how_many_slots = 0;
     strncpy(abs_bone_capemgr, "/sys/devices/", 13);
     // ==================== PWM0 ====================
@@ -35,7 +36,8 @@ int main(int argc, char *argv[]) {
     int found_pwm0_dir = 0;
     // file descriptors for PWM0 
     int fd_run_0, fd_period_0, fd_duty_0;
-    strncpy(abs_pwm0_dir_name, "/sys/devicves/ocp.3/", 20);
+    // we will find /sys/devices/ocp.N later and strncat "ocp.N/" here
+    strncpy(abs_pwm0_dir_name, "/sys/devices/", 13);
     // ==================== PWM1 ====================
     char *pwm1_dir_name = calloc(18, sizeof(char)); // "pwm_test_p9_14.xx" is 18 letters including null-terminator
     char *abs_pwm1_dir_name = calloc(38, sizeof(char)); // absolute path to pwm_test_p9_14.xx, "/sys/devices/ocp.3/pwm_test_p9_14.xx/"
@@ -46,7 +48,8 @@ int main(int argc, char *argv[]) {
     int found_pwm1_dir = 0;
     // file descriptors for PWM0 
     int fd_run_1, fd_period_1, fd_duty_1;
-    strncpy(abs_pwm1_dir_name, "/sys/devicves/ocp.3/", 20);
+    // we will find /sys/devices/ocp.N later and strncat "ocp.N/" here
+    strncpy(abs_pwm1_dir_name, "/sys/devices/", 13);
     // ==================== PWM2 ====================
     char *pwm2_dir_name = calloc(18, sizeof(char)); // "pwm_test_p8_19.xx" is 18 letters including null-terminator
     char *abs_pwm2_dir_name = calloc(38, sizeof(char)); // absolute path to pwm_test_p8_19.xx, "/sys/devices/ocp.3/pwm_test_p8_19.xx/"
@@ -57,7 +60,8 @@ int main(int argc, char *argv[]) {
     int found_pwm2_dir = 0;
     // file descriptors for PWM0 
     int fd_run_2, fd_period_2, fd_duty_2;
-    strncpy(abs_pwm2_dir_name, "/sys/devicves/ocp.3/", 20);
+    // we will find /sys/devices/ocp.N later and strncat "ocp.N/" here
+    strncpy(abs_pwm2_dir_name, "/sys/devices/", 13);
 
     // check directory /sys/devices/ for a directory that starts with "bone_capemgr."
     // this part was borrowed from Jean-Bernard Jansen's answer on:
@@ -65,6 +69,19 @@ int main(int argc, char *argv[]) {
     d = opendir("/sys/devices");
     if (d) {
         while ((dir = readdir(d)) != NULL) {
+            // we'll need to find /sys/devices/ocp.N later... might as well do it not
+            if ((strstr(dir->d_name, "ocp.") == dir->d_name) && (found_ocp == 0)) {
+                // set for PWM0
+                strncat(abs_pwm0_dir_name, dir->d_name, 5);
+                strncat(abs_pwm0_dir_name, "/", 1);
+                // set for PWM1
+                strncat(abs_pwm1_dir_name, dir->d_name, 5);
+                strncat(abs_pwm1_dir_name, "/", 1);
+                // set for PWM2
+                strncat(abs_pwm2_dir_name, dir->d_name, 5);
+                strncat(abs_pwm2_dir_name, "/", 1);
+                found_ocp = 1;
+            }
             // check if it's the directory we're looking for
             if (strstr(dir->d_name, "bone_capemgr.") == dir->d_name) {
                 strncpy(bone_capemgr, dir->d_name, 14);
@@ -132,7 +149,7 @@ int main(int argc, char *argv[]) {
     // PWM0A is a directory in the form of "/sys/devices/ocp.3/pwm_test_p9_31.xx"
     // PWM1A is a directory in the form of "/sys/devices/ocp.3/pwm_test_p9_14.xx"
     // PWM2A is a directory in the form of "/sys/devices/ocp.3/pwm_test_p8_19.xx"
-    d = opendir("/sys/devicves/ocp.3");
+    d = opendir(abs_pwm0_dir_name); // right now, this variable is "/sys/devices/ocp.N/"
     if (d) {
         // ==================== PWM0 ====================
         while ((dir = readdir(d)) != NULL) {
