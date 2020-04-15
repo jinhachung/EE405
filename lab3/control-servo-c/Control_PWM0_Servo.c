@@ -175,10 +175,19 @@ int main(int argc, char *argv[]) {
         // C. convert linearly from duty_us to duty_ns, and get duty_ns_str's
         // C - a: convert duty_us to duty_ns
         duty_ns = duty_us * 1000;
+        // D. compensate deadband
+        // assume deadband range 1.45ms ~ 1.55ms
+        // then for input duty, the actual duty is as follows
+        /*
+        if (duty_ns < 1500000)
+            duty_ns = 0.9 * duty_ns + 100000;
+        else if (duty_ns > 1500000)
+            duty_ns = 0.9 * duty_ns + 200000;
+        */
+        if (duty_ns != 1500000)
+            duty_ns = 0.9 * duty_ns + 100000 * ((duty_ns > 1500000) ? 2 : 1);
         // C - b: get duty_ns_str
         snprintf(duty_ns_str, 7, "%d", duty_ns);
-        // D. compensate deadband
-        // What. the. FUCK. is this?
         // E. control PWM with duty_ns_str
         // "echo $duty_ns > duty"
         write(fd_duty_0, duty_ns_str, strlen(duty_ns_str));
