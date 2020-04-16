@@ -117,6 +117,10 @@ int main(int argc, char *argv[]) {
     // reaching here means PWM0A has been acquired correctly
     // 2. init PWM0A via sysfs
     // PWM0A is a directory in the form of "/sys/devices/ocp.3/pwm_test_p9_31.xx"
+    if (found_ocp == 0) {
+        fprintf(stderr, "cannot find directory /sys/devices...\n");
+        exit(-1);
+    }
     d = opendir(abs_pwm0_dir_name); // right now, this variable is "/sys/devices/ocp.N/"
     if (d) {
         while ((dir = readdir(d)) != NULL) {
