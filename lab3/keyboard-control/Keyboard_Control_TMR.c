@@ -10,6 +10,7 @@
 #include <string.h>
 #include <dirent.h>
 #include <unistd.h>
+#include <math.h>
 
 #define eof 4
 #define esc 27
@@ -57,9 +58,26 @@ int main(void) {
     strncpy(abs_pwm2_dir_name, "/sys/devices/", 13);
 
     // 1. compute parameters
+    double pi = acos((double)-1); // sometimes M_PI is not defined, so use arc-cosine function
+    // L: 66mm (0.066m), r: 20mm (0.02m)
+    double L = 0.066;
+    double r = 0.020;
+    // input-managed integer values (-100~100)
     int ivx = 0;
     int ivy = 0;
-    int iw = 0;
+    int iw  = 0;
+    // robot movement velocity (m/s)
+    double vx = (double)0;
+    double vy = (double)0;
+    // robot rotational velocity (rad/s)
+    double wr = (double)0;
+    // wheel rotational velocities (rad/s)
+    double w1 = (double)0;
+    double w2 = (double)0;
+    double w3 = (double)0;
+    // gain_v and gain_w for converting ivx, ivy, and iw to vx, vy, and wr
+    double gain_v = (5 * sqrt(3) * pi * r) / 6;
+    double gain_w = (5 * pi * r) / (3 * L);
 
     // note that steps 2 and 3 are same as those implemented in question 4
     // for more specific information on the two steps,
@@ -280,7 +298,7 @@ int main(void) {
         // B. 'esc' or 'ctrl-D' key terminates
         if ((c == eof) || (c == esc))
             break;
-        // C. vx, vy, and w [%] from key input: Dec/inc speed by 10%. do saturation
+        // C. vx, vy, and w [%] from key input: dec/inc speed by 10%. do saturation
         ;
         // D. transform vx, vy, w [%] ->[m/s, rad/s] -> kinematics -> ww_rpm[] -> duty_ns
         ;
