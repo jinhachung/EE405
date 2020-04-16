@@ -9,6 +9,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <dirent.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 int main(int argc, char *argv[]) {
     // 0. print title
@@ -235,41 +237,41 @@ int main(int argc, char *argv[]) {
 
     // ==================== init for PWM0 ====================
     // "echo 0 > run"
-    fd_run_0 = open(afp_pwm0_run);
+    fd_run_0 = open(afp_pwm0_run, O_RDWR);
     write(fd_run_0, "0", 1);
     close(fd_run_0);
     // "echo 3000000 > period"
-    fd_period_0 = open(afp_pwm0_period);
+    fd_period_0 = open(afp_pwm0_period, O_RDWR);
     write(fd_period_0, "3000000", 7);
     close(fd_period_0);
     // "echo 1 > run"
-    fd_run_0 = open(afp_pwm0_run);
+    fd_run_0 = open(afp_pwm0_run, O_RDWR);
     write(fd_run_0, "1", 1);
     close(fd_run_0);
     // ==================== init for PWM1 ====================
     // "echo 0 > run"
-    fd_run_1 = open(afp_pwm1_run);
+    fd_run_1 = open(afp_pwm1_run, O_RDWR);
     write(fd_run_1, "0", 1);
     close(fd_run_1);
     // "echo 3000000 > period"
-    fd_period_1 = open(afp_pwm1_period);
+    fd_period_1 = open(afp_pwm1_period, O_RDWR);
     write(fd_period_1, "3000000", 7);
     close(fd_period_1);
     // "echo 1 > run"
-    fd_run_1 = open(afp_pwm1_run);
+    fd_run_1 = open(afp_pwm1_run, O_RDWR);
     write(fd_run_1, "1", 1);
     close(fd_run_1);
     // ==================== init for PWM2 ====================
     // "echo 0 > run"
-    fd_run_2 = open(afp_pwm2_run);
+    fd_run_2 = open(afp_pwm2_run, O_RDWR);
     write(fd_run_2, "0", 1);
     close(fd_run_2);
     // "echo 3000000 > period"
-    fd_period_2 = open(afp_pwm2_period);
+    fd_period_2 = open(afp_pwm2_period, O_RDWR);
     write(fd_period_2, "3000000", 7);
     close(fd_period_2);
     // "echo 1 > run"
-    fd_run_2 = open(afp_pwm2_run);
+    fd_run_2 = open(afp_pwm2_run, O_RDWR);
     write(fd_run_2, "1", 1);
     close(fd_run_2);
 
@@ -284,9 +286,9 @@ int main(int argc, char *argv[]) {
             (duty_us0 > 2000) || (duty_us1 > 2000) || (duty_us2 > 2000)) 
             break;
         // open duty files because now, we will DEFINITELY write to this file
-        fd_duty_0 = open(afp_pwm0_duty);
-        fd_duty_1 = open(afp_pwm1_duty);
-        fd_duty_2 = open(afp_pwm2_duty);
+        fd_duty_0 = open(afp_pwm0_duty, O_RDWR);
+        fd_duty_1 = open(afp_pwm1_duty, O_RDWR);
+        fd_duty_2 = open(afp_pwm2_duty, O_RDWR);
         // C. convert linearly from duty_us to duty_ns, and get duty_ns_str's
         // C - a: convert duty_us to duty_ns
         duty_ns0 = duty_us0 * 1000;
@@ -317,13 +319,13 @@ int main(int argc, char *argv[]) {
     }
     // 8. stop PWMs
     // "echo 0 > run" - for PWM0A
-    fd_run_0 = open(afp_pwm0_run);
+    fd_run_0 = open(afp_pwm0_run, O_RDWR);
     write(fd_run_0, "0", 1);
     // "echo 0 > run" - for PWM1A
-    fd_run_1 = open(afp_pwm1_run);
+    fd_run_1 = open(afp_pwm1_run, O_RDWR);
     write(fd_run_1, "0", 1);
     // "echo 0 > run" - for PWM2A
-    fd_run_2 = open(afp_pwm2_run);
+    fd_run_2 = open(afp_pwm2_run, O_RDWR);
     write(fd_run_2, "0", 1);
 
     // 9. close files

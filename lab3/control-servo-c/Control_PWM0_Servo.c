@@ -9,6 +9,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <dirent.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 int main(int argc, char *argv[]) {
     // 0. print title
@@ -153,15 +155,15 @@ int main(int argc, char *argv[]) {
     strncat(afp_pwm0_duty, "duty", 4);
 
     // "echo 0 > run"
-    fd_run_0 = open(afp_pwm0_run);
+    fd_run_0 = open(afp_pwm0_run, O_RDWR);
     write(fd_run_0, "0", 1);
     close(fd_run_0);
     // "echo 3000000 > period"
-    fd_period_0 = open(afp_pwm0_period);
+    fd_period_0 = open(afp_pwm0_period, O_RDWR);
     write(fd_period_0, "3000000", 7);
     close(fd_period_0);
     // "echo 1 > run"
-    fd_run_0 = open(afp_pwm0_run);
+    fd_run_0 = open(afp_pwm0_run, O_RDWR);
     write(fd_run_0, "1", 1);
     close(fd_run_0);
 
@@ -175,7 +177,7 @@ int main(int argc, char *argv[]) {
         if ((duty_us < 1000) || (duty_us > 2000)) 
             break;
         // open duty file because now, we will DEFINITELY write to this file
-        fd_duty_0 = open(afp_pwm0_duty);
+        fd_duty_0 = open(afp_pwm0_duty, O_RDWR);
         // C. convert linearly from duty_us to duty_ns, and get duty_ns_str's
         // C - a: convert duty_us to duty_ns
         duty_ns = duty_us * 1000;
@@ -200,7 +202,7 @@ int main(int argc, char *argv[]) {
     }
     // 8. stop PWM0A
     // "echo 0 > run"
-    fd_run_0 = open(afp_pwm0_run);
+    fd_run_0 = open(afp_pwm0_run, O_RDWR);
     write(fd_run_0, "0", 1);
     
     // 9. close files
