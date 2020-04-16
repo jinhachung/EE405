@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
     char *afp_pwm1_period = calloc(44, sizeof(char));
     char *afp_pwm1_duty = calloc(42, sizeof(char));
     int found_pwm1_dir = 0;
-    // file descriptors for PWM0 
+    // file descriptors for PWM1 
     int fd_run_1, fd_period_1, fd_duty_1;
     // we will find /sys/devices/ocp.N later and strncat "ocp.N/" here
     strncpy(abs_pwm1_dir_name, "/sys/devices/", 13);
@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
     char *afp_pwm2_period = calloc(44, sizeof(char));
     char *afp_pwm2_duty = calloc(42, sizeof(char));
     int found_pwm2_dir = 0;
-    // file descriptors for PWM0 
+    // file descriptors for PWM2
     int fd_run_2, fd_period_2, fd_duty_2;
     // we will find /sys/devices/ocp.N later and strncat "ocp.N/" here
     strncpy(abs_pwm2_dir_name, "/sys/devices/", 13);

@@ -224,7 +224,7 @@ int main(void) {
         }
     }
     else {
-        fprintf(stderr, "cannot find directory %s...\n", "/sys/devices/ocp.3");
+        fprintf(stderr, "cannot find directory %s...\n", abs_pwn0_dir_name);
         exit(-1);
     }
     // abs_pwm0_dir_name now saves "/sys/devices/ocp.3/pwm_test_p9_31.xx/"
