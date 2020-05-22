@@ -22,3 +22,4 @@ echo bone_pwm_P8_19 > ./slots
 
 # 4. confirm by listing suitable directory
 ls
+
