@@ -84,7 +84,8 @@ int main(int argc, char *argv[])
 
   /* 1. Initialize UDP socket */
   /* TODO: A. Make client socket using socket() function (UDP socket) */
-  client_socket = socket(/* Code */);
+  // AF_INET: IPv4, SOCK_DGRAM: datagram (UDP), IPPROTO_UDP: UDP protocol
+  client_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
   if (client_socket < 0) {
     printf("client: can not open socket.\n");
     return -1;
@@ -116,31 +117,41 @@ int main(int argc, char *argv[])
       /* TODO: B. Write the code for commands */
       case 'w':
         /* Example. Increase speed x-axis with upper limit */
-        ivx = MIN(ivx+1,10);
+        ivx = MIN(ivx + 1, 10);
         break;
       case 'a':
         /* B1. Increase speed y-axis with upper limit (ivy)*/
+        ivy = MIN(ivy + 1, 10);
         break;
       case 's':
         /* B2. Stop */
+        ivx = 0;
+        ivy = 0;
+        iw = 0;
         break;
       case 'd':
         /* B3. Decrease speed y-axis with lower limit (ivy)*/
+        ivy = MAX(ivy - 1, -10);
         break;
       case 'x':
         /* B4. Decrease speed x-axis with lower limit (ivx)*/
+        ivx = MAX(ivx - 1, -10);
         break;
       case 'z':
         /* B5. Increase rotation speed z-axis with upper limit (iw)*/
+        iw = MIN(iw + 1, 10);
         break;
       case 'c'
         /* B6. Decrease rotation speed z-axis with lower limit (iw)*/
+        iw = MAX(iw - 1, 10);
         break;
       case 'q':
         /* B7. Toggle Left LED (LL)*/
+        LL = (1 - LL);
         break;
       case 'e':
         /* B8. Toggle Right LED (RL)*/
+        RL = (1 - RL);
         break;
       case 0x1B: //ESC
         goto done;
@@ -207,14 +218,21 @@ int main(int argc, char *argv[])
       /* Send command via Wi-Fi UDP socket */
       sprintf(command, "%d,%d,%d,%d,%d", pwm_duty[0], pwm_duty[1], pwm_duty[2], LL, RL);
       /* TODO: C. Send command string to UDP server using sendto() funtion */
-      sendto(/* Code */);
+      // sockfd: client_socket
+      // buf: buffer to send -> command
+      // len: length of message -> include NULL -> strlen(command) + 1
+      // flags: 0 (not routing program, so not MSG_DONTROUTE)
+      // dest_addr: IP address of destination -> server_addr
+      // addrlen: length of dest_addr -> server_addr_len
+      sendto(client_socket, command, strlen(command) + 1, 0, server_addr, server_addr_len);
     }
   }
 
 done:
   sprintf(command, "%s", "exit");
   /* TODO: D. Send command string to UDP server using sendto() funtion */
-  sendto(/* Code */);
+  // same as above sendto()
+  sendto(client_socket, command, strlen(command) + 1, 0, server_addr, server_addr_len);
   system("clear");
   printf("%s\n", command);
   return 0;
