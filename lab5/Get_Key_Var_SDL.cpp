@@ -90,7 +90,7 @@ int main(int argc, char* args[]) {
             }
         }
     }
-	//Free resources and close SDL
+	// free resources and close SDL
 	close();
 	return 0;
 }
