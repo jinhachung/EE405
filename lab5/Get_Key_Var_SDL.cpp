@@ -85,6 +85,8 @@ int main(int argc, char* args[]) {
                             e.key.keysym.scancode, e.key.keysym.sym, e.key.keysym.mod);
                     }
                 }
+                // apply the image
+				SDL_BlitSurface(gXOut, NULL, gScreenSurface, NULL);
                 // update surface
                 SDL_UpdateWindowSurface(gWindow);
             }
