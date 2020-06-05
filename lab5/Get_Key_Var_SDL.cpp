@@ -79,7 +79,7 @@ int main(int argc, char* args[]) {
                 while (SDL_PollEvent(&e) != 0) {
                     // user requests quit
                     if (e.type == SDL_QUIT) quit = true;
-                    else {
+                    else if (e.type == SDL_KEYDOWN) {
                         // print SDL_Scancode, SDL_Keycode, and SDL_Keymod in hexadecimal for each key pressed
                         printf("Key scancode %xh, keybode %xh, keymod %xh.\n",
                             e.key.keysym.scancode, e.key.keysym.sym, e.key.keysym.mod);

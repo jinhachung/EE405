@@ -81,7 +81,7 @@ int main(int argc, char* args[]) {
                 while (SDL_PollEvent(&e) != 0) {
                     // user requests quit
                     if (e.type == SDL_QUIT) quit = true;
-                    else {
+                    else if (e.type == SDL_KEYDOWN) {
                         // print keycode value as %02xh and %c % fflush(stdout)
                         kcode = e.key.keysym.sym;
                         printf("%02xh '%c'; ", kcode, kcode);
